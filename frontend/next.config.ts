@@ -1,32 +1,39 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  // ❌ REMOVER: swcMinify: true, (ya no es necesario en Next.js 14+)
-  
-  // ✅ Variables de entorno
-  env: {
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
-    NEXT_PUBLIC_BACKEND_PORT: process.env.NEXT_PUBLIC_BACKEND_PORT,
+  experimental: {
+    appDir: true,
   },
-
-  // ✅ Headers de seguridad
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload'
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            value: 'nosniff'
+          }
+        ],
+      },
+      {
+        source: '/_next/static/css/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },
-    ];
+    ]
   },
-};
+  output: 'standalone',
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig
